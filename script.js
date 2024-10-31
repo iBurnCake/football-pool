@@ -3,38 +3,45 @@ const userProfiles = {
     "AngelaKant": "5353",
     "LukeRomano": "4242",
     "RyanSanders": "8989",
-    "CharlesKeegan": "0000"
+    "CharlesKeegan": "0000",
+    "WilliamMathis": "2222" // New user added
 };
 
-// To store user picks and assigned points
-let userPicks = {}; // Track selected teams for each game
+// Initialize variables
+let userPicks = {}; // Store each user's picks for the games
 let assignedPoints = new Set(); // Track used confidence points
-let games = []; // Global variable to hold game details after fetching
+let games = []; // Hold game details fetched from API
+let leaderboard = { "AngelaKant": 120, "LukeRomano": 120, "RyanSanders": 120, "CharlesKeegan": 120, "WilliamMathis": 120 }; // Starting points
 
-// Sample games data (use API if available)
-const sampleGames = [
-    { homeTeam: 'Texans', awayTeam: 'Jets', homeRecord: '6-2', awayRecord: '2-6' },
-    { homeTeam: 'Saints', awayTeam: 'Panthers', homeRecord: '2-6', awayRecord: '1-7' },
-    { homeTeam: 'Commanders', awayTeam: 'Giants', homeRecord: '6-2', awayRecord: '2-6' },
-    { homeTeam: 'Dolphins', awayTeam: 'Bills', homeRecord: '2-5', awayRecord: '6-2' },
-    { homeTeam: 'Chargers', awayTeam: 'Browns', homeRecord: '4-3', awayRecord: '2-6' },
-    { homeTeam: 'Patriots', awayTeam: 'Titans', homeRecord: '2-6', awayRecord: '1-6' },
-    { homeTeam: 'Cowboys', awayTeam: 'Falcons', homeRecord: '3-4', awayRecord: '5-3' },
-    { homeTeam: 'Raiders', awayTeam: 'Bengals', homeRecord: '2-6', awayRecord: '3-5' },
-    { homeTeam: 'Broncos', awayTeam: 'Ravens', homeRecord: '5-3', awayRecord: '5-3' },
-    { homeTeam: 'Bears', awayTeam: 'Cardinals', homeRecord: '4-3', awayRecord: '4-4' },
-    { homeTeam: 'Jaguars', awayTeam: 'Eagles', homeRecord: '2-6', awayRecord: '5-2' },
-    { homeTeam: 'Rams', awayTeam: 'Seahawks', homeRecord: '3-4', awayRecord: '4-4' },
-    { homeTeam: 'Lions', awayTeam: 'Packers', homeRecord: '6-1', awayRecord: '6-2' },
-    { homeTeam: 'Colts', awayTeam: 'Vikings', homeRecord: '4-4', awayRecord: '5-2' },
-    { homeTeam: 'Buccaneers', awayTeam: 'Chiefs', homeRecord: '4-4', awayRecord: '7-0' },
-    // Add more games as needed
-];
+// Function to fetch game data from the API
+async function fetchGameData() {
+    try {
+        const response = await fetch('https://sports.core.api.espn.com/v2/sports/football/leagues/nfl/events', {
+            headers: { 'x-api-key': 'cf87518a-2988-4c7b-8ac9-4443bb' }
+        });
 
-// Function to display games in the pool format
+        if (!response.ok) throw new Error("Failed to fetch game events");
+
+        const data = await response.json();
+        games = data.items.map(item => ({
+            homeTeam: item.competitions[0].competitors[0].team.displayName,
+            awayTeam: item.competitions[0].competitors[1].team.displayName,
+            homeRecord: item.competitions[0].competitors[0].record,
+            awayRecord: item.competitions[0].competitors[1].record,
+            gameId: item.id,
+            status: item.status.type.shortDetail
+        }));
+
+        displayGames(games); // Display fetched games
+    } catch (error) {
+        console.error("Error fetching NFL data:", error);
+    }
+}
+
+// Function to display games in the table with options for picking teams
 function displayGames(games) {
     const tableBody = document.getElementById('gamesTable').getElementsByTagName('tbody')[0];
-    tableBody.innerHTML = ''; // Clear existing rows
+    tableBody.innerHTML = ''; // Clear any existing rows
 
     games.forEach((game, index) => {
         const row = tableBody.insertRow();
@@ -51,7 +58,7 @@ function displayGames(games) {
     });
 }
 
-// Track selected picks and used confidence points
+// Functions for managing picks and confidence points
 function selectPick(gameIndex, team) {
     userPicks[gameIndex] = { team, points: null };
     alert(`You selected ${team} for game ${gameIndex + 1}`);
@@ -81,7 +88,7 @@ function login(username, password) {
         document.getElementById('userHomeSection').style.display = 'block';
         document.getElementById('gamesSection').style.display = 'block';
         document.getElementById('usernameDisplay').textContent = username; // Display username
-        displayGames(sampleGames); // Display games in personal pool format
+        fetchGameData(); // Fetch and display games
     } else {
         alert("Invalid username or password.");
     }
@@ -93,6 +100,38 @@ function handleLogin(event) {
     const username = document.getElementById('username').value;
     const password = document.getElementById('password').value;
     login(username, password); // Call the login function
+}
+
+// Function to update leaderboard based on game results
+function updateLeaderboard() {
+    Object.keys(userPicks).forEach(gameIndex => {
+        const pickData = userPicks[gameIndex];
+        const game = games[gameIndex];
+        const result = game.status; // Example: if 'home' won, 'away' lost
+
+        if ((result === 'home' && pickData.team === game.homeTeam) ||
+            (result === 'away' && pickData.team === game.awayTeam)) {
+            leaderboard[sessionStorage.getItem("loggedInUser")] += pickData.points;
+        } else {
+            leaderboard[sessionStorage.getItem("loggedInUser")] -= pickData.points;
+        }
+    });
+
+    displayLeaderboard();
+}
+
+// Function to display the leaderboard in House Picks view
+function displayLeaderboard() {
+    const leaderboardTableBody = document.getElementById('leaderboardTable').getElementsByTagName('tbody')[0];
+    leaderboardTableBody.innerHTML = ''; // Clear existing rows
+
+    Object.keys(leaderboard).forEach(user => {
+        const row = leaderboardTableBody.insertRow();
+        row.innerHTML = `
+            <td>${user}</td>
+            <td>${leaderboard[user]}</td>
+        `;
+    });
 }
 
 // Set up form to trigger handleLogin on submission

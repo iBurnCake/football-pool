@@ -1,13 +1,28 @@
-// Placeholder function for displaying house picks
-document.addEventListener('DOMContentLoaded', () => {
-    const picksTable = document.getElementById('picksTable');
-    const currentDate = new Date();
-    const lockDate = new Date('2024-10-31T20:00:00-04:00'); // Lock date in EST
+document.addEventListener("DOMContentLoaded", () => {
+    const housePicksTable = document.getElementById("housePicksTable");
 
-    if (currentDate < lockDate) {
-        picksTable.innerHTML = `<p>Picks can still be modified until ${lockDate.toLocaleString()}.</p>`;
-    } else {
-        picksTable.innerHTML = `<p>Picks are now locked. Here are everyone's final selections:</p>`;
-        // Populate locked picks here in future steps
-    }
+    // Example data - for actual use, fetch data
+    const housePicks = [
+        { game: "Texans vs Jets", user: "LukeRomano", pick: "Texans", points: 8 },
+        { game: "Texans vs Jets", user: "AngelaKant", pick: "Jets", points: 10 },
+        // More picks here...
+    ];
+
+    displayHousePicks(housePicks);
 });
+
+function displayHousePicks(housePicks) {
+    const tableBody = document.getElementById('housePicksTable').getElementsByTagName('tbody')[0];
+    tableBody.innerHTML = ''; // Clear any existing rows
+
+    housePicks.forEach(pick => {
+        const row = tableBody.insertRow();
+        row.innerHTML = `
+            <td>${pick.game}</td>
+            <td>${pick.user}</td>
+            <td>${pick.pick}</td>
+            <td>${pick.points}</td>
+            <td class="${pick.result === 'Win' ? 'win' : ''}">${pick.result || 'Pending'}</td>
+        `;
+    });
+}
