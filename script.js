@@ -10,11 +10,11 @@ const userProfiles = {
 let userPicks = {};
 let assignedPoints = new Set();
 let leaderboard = [];
+let games = []; // Global variable to hold game details after fetching
 
 // Function to fetch NFL game data from the API
 async function fetchGameData() {
     try {
-        // Initial request to get the list of game event URLs
         const response = await fetch('https://sports.core.api.espn.com/v2/sports/football/leagues/nfl/events', {
             headers: {
                 'x-api-key': 'cf87518a-2988-4c7b-8ac9-4443bb'
@@ -26,14 +26,13 @@ async function fetchGameData() {
         const data = await response.json();
         
         // Array to store details of each game event
-        let gameDetails = [];
+        games = [];
 
         // Loop through each game URL and fetch specific game data
         for (let item of data.items) {
             const gameResponse = await fetch(item.$ref);
             const gameData = await gameResponse.json();
 
-            // Extract the needed data from each game event
             const game = {
                 homeTeam: gameData.competitions[0].competitors[0].team.displayName,
                 awayTeam: gameData.competitions[0].competitors[1].team.displayName,
@@ -41,11 +40,10 @@ async function fetchGameData() {
                 status: gameData.status.type.shortDetail
             };
 
-            gameDetails.push(game);
+            games.push(game);
         }
 
-        // Display the games using the function we previously set up
-        displayGames(gameDetails);
+        displayGames(games);
 
     } catch (error) {
         console.error("Error fetching NFL data:", error);
@@ -107,7 +105,6 @@ function pickGame(index) {
         return;
     }
 
-    // If valid, assign the point
     assignedPoints.add(confidencePoints);
     userPicks[index] = {
         game: games[index],
@@ -122,13 +119,11 @@ function pickGame(index) {
 function updateLeaderboard() {
     leaderboard = Object.entries(userPicks).map(([key, value]) => ({
         username: sessionStorage.getItem("loggedInUser") || "Anonymous",
-        totalPoints: value.points // Adjust as necessary to sum points correctly
+        totalPoints: value.points
     }));
 
-    // Sort the leaderboard by total points
     leaderboard.sort((a, b) => b.totalPoints - a.totalPoints);
-    
-    displayLeaderboard(); // Call function to render the leaderboard
+    displayLeaderboard();
 }
 
 // Function to display the leaderboard
@@ -145,5 +140,5 @@ function displayLeaderboard() {
     });
 }
 
-// Call to display games after fetching data and on page load
-window.onload = fetchGameData;
+// Set up form to trigger handleLogin on submission
+document.querySelector("form").onsubmit = handleLogin;
