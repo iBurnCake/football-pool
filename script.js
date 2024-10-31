@@ -1,4 +1,4 @@
-// User profiles (username and password)
+// User profiles
 const userProfiles = {
     "AngelaKant": "5353",
     "LukeRomano": "4242",
@@ -7,42 +7,33 @@ const userProfiles = {
     "WilliamMathis": "2222" // New user added
 };
 
-// To store user picks and assigned points
-let userPicks = {}; // Track selected teams for each game
-let assignedPoints = new Set(); // Track used confidence points
-let games = []; // Global variable to hold game details after fetching
+// Fixed game data for Week 9
+const games = [
+    { homeTeam: 'Texans', awayTeam: 'Jets', homeRecord: '6-2', awayRecord: '2-6' },
+    { homeTeam: 'Saints', awayTeam: 'Panthers', homeRecord: '2-6', awayRecord: '1-7' },
+    { homeTeam: 'Commanders', awayTeam: 'Giants', homeRecord: '6-2', awayRecord: '2-6' },
+    { homeTeam: 'Dolphins', awayTeam: 'Bills', homeRecord: '2-5', awayRecord: '6-2' },
+    { homeTeam: 'Chargers', awayTeam: 'Browns', homeRecord: '4-3', awayRecord: '2-6' },
+    { homeTeam: 'Patriots', awayTeam: 'Titans', homeRecord: '2-6', awayRecord: '1-6' },
+    { homeTeam: 'Cowboys', awayTeam: 'Falcons', homeRecord: '3-4', awayRecord: '5-3' },
+    { homeTeam: 'Raiders', awayTeam: 'Bengals', homeRecord: '2-6', awayRecord: '3-5' },
+    { homeTeam: 'Broncos', awayTeam: 'Ravens', homeRecord: '5-3', awayRecord: '5-3' },
+    { homeTeam: 'Bears', awayTeam: 'Cardinals', homeRecord: '4-3', awayRecord: '4-4' },
+    { homeTeam: 'Jaguars', awayTeam: 'Eagles', homeRecord: '2-6', awayRecord: '5-2' },
+    { homeTeam: 'Rams', awayTeam: 'Seahawks', homeRecord: '3-4', awayRecord: '4-4' },
+    { homeTeam: 'Lions', awayTeam: 'Packers', homeRecord: '6-1', awayRecord: '6-2' },
+    { homeTeam: 'Colts', awayTeam: 'Vikings', homeRecord: '4-4', awayRecord: '5-2' },
+    { homeTeam: 'Buccaneers', awayTeam: 'Chiefs', homeRecord: '4-4', awayRecord: '7-0' }
+];
 
-// Function to fetch NFL game data from the API
-async function fetchGameData() {
-    try {
-        const response = await fetch('https://sports.core.api.espn.com/v2/sports/football/leagues/nfl/events', {
-            headers: {
-                'x-api-key': 'cf87518a-2988-4c7b-8ac9-4443bb'
-            }
-        });
-
-        if (!response.ok) throw new Error("Failed to fetch game events");
-
-        const data = await response.json();
-        games = data.items.map(item => ({
-            homeTeam: item.competitions[0].competitors[0].team.displayName,
-            awayTeam: item.competitions[0].competitors[1].team.displayName,
-            homeRecord: item.competitions[0].competitors[0].record,
-            awayRecord: item.competitions[0].competitors[1].record,
-            gameId: item.id,
-            status: item.status.type.shortDetail
-        }));
-
-        displayGames(games);
-    } catch (error) {
-        console.error("Error fetching NFL data:", error);
-    }
-}
+// Track user picks and assigned points
+let userPicks = {};
+let usedPoints = new Set();
 
 // Function to display games in the table
-function displayGames(games) {
+function displayGames() {
     const tableBody = document.getElementById('gamesTable').getElementsByTagName('tbody')[0];
-    tableBody.innerHTML = ''; // Clear any existing rows
+    tableBody.innerHTML = ''; // Clear existing rows
 
     games.forEach((game, index) => {
         const row = tableBody.insertRow();
@@ -59,21 +50,22 @@ function displayGames(games) {
     });
 }
 
-// Function to select pick and assign confidence points
+// Handle selection of a team
 function selectPick(gameIndex, team) {
     userPicks[gameIndex] = { team, points: null };
     alert(`You selected ${team} for game ${gameIndex + 1}`);
 }
 
+// Assign confidence points
 function assignConfidence(gameIndex) {
     const confidenceInput = document.getElementById(`confidence${gameIndex}`);
     const points = parseInt(confidenceInput.value);
 
-    if (assignedPoints.has(points)) {
+    if (usedPoints.has(points)) {
         alert("This confidence point is already used. Choose a different one.");
         confidenceInput.value = ''; // Clear duplicate entry
     } else if (points >= 1 && points <= 16) {
-        assignedPoints.add(points);
+        usedPoints.add(points);
         userPicks[gameIndex].points = points;
         alert(`Assigned ${points} points to game ${gameIndex + 1}`);
     } else {
@@ -81,26 +73,25 @@ function assignConfidence(gameIndex) {
     }
 }
 
-// Function to handle login
+// Login function
 function login(username, password) {
     if (userProfiles[username] === password) {
-        sessionStorage.setItem("loggedInUser", username); // Store the username
+        sessionStorage.setItem("loggedInUser", username);
+        document.getElementById('usernameDisplay').textContent = username;
         document.getElementById('loginSection').style.display = 'none';
         document.getElementById('userHomeSection').style.display = 'block';
-        document.getElementById('gamesSection').style.display = 'block';
-        document.getElementById('usernameDisplay').textContent = username; // Display username
-        fetchGameData(); // Fetch and display games
+        displayGames();
     } else {
         alert("Invalid username or password.");
     }
 }
 
-// Function to handle login form submission
+// Handle login form submission
 function handleLogin(event) {
-    event.preventDefault(); // Prevent the form from submitting normally
+    event.preventDefault();
     const username = document.getElementById('username').value;
     const password = document.getElementById('password').value;
-    login(username, password); // Call the login function
+    login(username, password);
 }
 
 // Set up form to trigger handleLogin on submission

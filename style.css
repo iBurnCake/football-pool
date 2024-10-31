@@ -15,7 +15,6 @@ body {
     min-height: 100vh;
     padding: 20px;
     flex-direction: column;
-    margin: 0;
 }
 
 /* Welcome Message Styling */
@@ -94,7 +93,7 @@ button:hover {
     background-color: #1F5B99;
 }
 
-/* Navigation Button Styling for Profile, House Picks, and Leaderboard */
+/* Navigation Button Styling */
 #topSection {
     display: flex;
     justify-content: center;

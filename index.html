@@ -3,30 +3,20 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login - NFL Football Pool</title>
+    <title>Football Pool</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <!-- Welcome Message -->
-    <h1 id="welcomeMessage">Welcome to NFL Football Pool</h1>
-    <!-- Login Section -->
+    <!-- Top Section -->
+    <div id="topSection">
+        <h1>Welcome to NFL Football Pool</h1>
+        <h2>Week 9</h2>
+        <p>Welcome, <span id="usernameDisplay"></span>!</p>
+    </div>
 
-    <section id="loginSection">
-        <div class="login-container">
-            <form onsubmit="handleLogin(event)">
-                <label for="username">Username:</label>
-                <input type="text" id="username" required>
-                <label for="password">Password:</label>
-                <input type="password" id="password" required>
-                <button type="submit">Login</button>
-            </form>
-        </div>
-    </section>
-
-    <!-- User Home Section -->
-    <section id="userHomeSection" style="display: none;">
-        <h2>Welcome, <span id="usernameDisplay"></span>!</h2>
-        <h3>Your Personal Pool - Week 9</h3>
+    <!-- Games Table Section -->
+    <section id="gamesSection" class="contentSection">
+        <h2>Your Personal Pool - Week 9</h2>
         <table id="gamesTable">
             <thead>
                 <tr>
