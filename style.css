@@ -14,6 +14,7 @@ body {
     justify-content: center;
     min-height: 100vh;
     padding: 20px;
+    flex-direction: column; /* Add this to center content vertically */
 }
 
 /* Centered Login Container Styling */
@@ -25,57 +26,21 @@ body {
     width: 100%;
     max-width: 400px;
     text-align: center;
+    margin: auto; /* Center the login container */
 }
 
-.login-container h1, .login-container h2 {
-    margin-bottom: 20px;
-    color: #FFD700; /* NFL gold color */
-}
-
-label {
-    font-weight: bold;
-    color: #FFD700;
-}
-
-input {
-    padding: 10px;
-    font-size: 16px;
-    border-radius: 4px;
-    border: none;
-    outline: none;
-    width: 100%;
-    margin-bottom: 15px;
-}
-
-button {
-    padding: 12px;
-    width: 100%;
-    font-size: 16px;
-    background-color: #3B7EED; /* NFL blue color */
-    color: #FFFFFF;
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
-    transition: background-color 0.3s;
-    font-weight: bold;
-}
-
-button:hover {
-    background-color: #1F5B99;
-}
-
-/* Games and Leaderboard Sections */
-section {
+/* User Home Section and Game Section Styling */
+#userHomeSection, #gamesSection, #leaderboardSection {
     width: 90%;
     max-width: 1000px;
     margin: 20px auto;
+    text-align: center;
 }
 
-h2 {
+/* Centered Heading Styling */
+h1, h2 {
     color: #FFD700;
     text-align: center;
-    margin-top: 20px;
-    font-size: 24px;
     font-weight: bold;
 }
 
@@ -85,6 +50,7 @@ h2 {
     margin-bottom: 10px;
 }
 
+/* Table Styling */
 table {
     width: 100%;
     border-collapse: collapse;
@@ -104,7 +70,20 @@ th {
     font-weight: bold;
 }
 
-/* Hide initial sections */
-#userHomeSection, #gamesSection, #leaderboardSection {
-    display: none;
+/* Button Styling */
+button {
+    padding: 12px;
+    width: 100%;
+    font-size: 16px;
+    background-color: #3B7EED; /* NFL blue color */
+    color: #FFFFFF;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+    font-weight: bold;
+}
+
+button:hover {
+    background-color: #1F5B99;
 }
