@@ -13,7 +13,27 @@ let games = []; // Global variable to hold game details after fetching
 
 // Function to fetch NFL game data from the API
 async function fetchGameData() {
-    // (API fetching logic remains the same)
+    try {
+        const response = await fetch('https://sports.core.api.espn.com/v2/sports/football/leagues/nfl/events', {
+            headers: {
+                'x-api-key': 'cf87518a-2988-4c7b-8ac9-4443bb'
+            }
+        });
+
+        if (!response.ok) throw new Error("Failed to fetch game events");
+
+        const data = await response.json();
+        games = data.items.map(item => ({
+            homeTeam: item.homeTeam,
+            awayTeam: item.awayTeam,
+            homeRecord: item.homeRecord,
+            awayRecord: item.awayRecord,
+        }));
+
+        displayGames(games);
+    } catch (error) {
+        console.error("Error fetching NFL data:", error);
+    }
 }
 
 // Function to display games in the table
@@ -24,8 +44,7 @@ function displayGames(games) {
     games.forEach((game, index) => {
         const row = tableBody.insertRow();
         row.innerHTML = `
-            <td>${game.homeTeam} vs ${game.awayTeam}</td>
-            <td>${game.homeRecord} - ${game.awayRecord}</td>
+            <td>${game.homeTeam} (${game.homeRecord}) vs ${game.awayTeam} (${game.awayRecord})</td>
             <td>
                 <button onclick="selectPick(${index}, 'home')">${game.homeTeam}</button>
                 <button onclick="selectPick(${index}, 'away')">${game.awayTeam}</button>
@@ -37,7 +56,7 @@ function displayGames(games) {
     });
 }
 
-// Track selected picks and used confidence points
+// Function to select pick and assign confidence points
 function selectPick(gameIndex, team) {
     userPicks[gameIndex] = { team, points: null };
     alert(`You selected ${team} for game ${gameIndex + 1}`);
@@ -47,11 +66,11 @@ function assignConfidence(gameIndex) {
     const confidenceInput = document.getElementById(`confidence${gameIndex}`);
     const points = parseInt(confidenceInput.value);
 
-    if (usedPoints.has(points)) {
+    if (assignedPoints.has(points)) {
         alert("This confidence point is already used. Choose a different one.");
         confidenceInput.value = ''; // Clear duplicate entry
     } else if (points >= 1 && points <= 16) {
-        usedPoints.add(points);
+        assignedPoints.add(points);
         userPicks[gameIndex].points = points;
         alert(`Assigned ${points} points to game ${gameIndex + 1}`);
     } else {
@@ -79,28 +98,6 @@ function handleLogin(event) {
     const username = document.getElementById('username').value;
     const password = document.getElementById('password').value;
     login(username, password); // Call the login function
-}
-
-// Function to display the user's personal leaderboard
-function showUserLeaderboard() {
-    document.getElementById('leaderboardSection').style.display = 'block';
-    displayLeaderboard();
-}
-
-// Function to update and display the personal leaderboard
-function displayLeaderboard() {
-    const leaderboardTableBody = document.getElementById('leaderboardTable').getElementsByTagName('tbody')[0];
-    leaderboardTableBody.innerHTML = ''; // Clear existing rows
-
-    Object.entries(userPicks).forEach(([gameIndex, pickData]) => {
-        const row = leaderboardTableBody.insertRow();
-        row.innerHTML = `
-            <td>Game ${parseInt(gameIndex) + 1}</td>
-            <td>${pickData.team}</td>
-            <td>${pickData.points}</td>
-            <td>${pickData.result || 'Pending'}</td>
-        `;
-    });
 }
 
 // Set up form to trigger handleLogin on submission
