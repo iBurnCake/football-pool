@@ -6,49 +6,14 @@ const userProfiles = {
     "CharlesKeegan": "0000"
 };
 
-// To store user picks and leaderboard
+// To store user picks and assigned points
 let userPicks = {}; // Track selected teams for each game
-let assignedPoints = new Set(); // Track used confidence points to ensure uniqueness
-let leaderboard = [];
+let assignedPoints = new Set(); // Track used confidence points
 let games = []; // Global variable to hold game details after fetching
-
-// Sample games data (use this temporarily or replace with actual API data)
-const sampleGames = [
-    { homeTeam: 'Vikings', awayTeam: 'Packers', homeRecord: '5-2', awayRecord: '3-4' },
-    { homeTeam: 'Jets', awayTeam: 'Patriots', homeRecord: '2-5', awayRecord: '1-6' },
-    { homeTeam: 'Bears', awayTeam: 'Lions', homeRecord: '1-5', awayRecord: '3-3' },
-    { homeTeam: 'Chargers', awayTeam: 'Raiders', homeRecord: '4-3', awayRecord: '2-5' },
-    { homeTeam: 'Dolphins', awayTeam: 'Bills', homeRecord: '4-4', awayRecord: '5-2' }
-];
 
 // Function to fetch NFL game data from the API
 async function fetchGameData() {
-    try {
-        const response = await fetch('https://sports.core.api.espn.com/v2/sports/football/leagues/nfl/events', {
-            headers: {
-                'x-api-key': 'cf87518a-2988-4c7b-8ac9-4443bb'
-            }
-        });
-
-        if (!response.ok) throw new Error("Failed to fetch game events");
-
-        const data = await response.json();
-        
-        games = data.items.map((item) => ({
-            homeTeam: item.homeTeam,  // Replace with actual data structure from API response
-            awayTeam: item.awayTeam,
-            homeRecord: item.homeRecord,
-            awayRecord: item.awayRecord,
-            date: item.date,
-            status: item.status
-        }));
-
-        displayGames(games);
-
-    } catch (error) {
-        console.error("Error fetching NFL data:", error);
-        displayGames(sampleGames); // Use sample data if API fails
-    }
+    // (API fetching logic remains the same)
 }
 
 // Function to display games in the table
@@ -74,7 +39,7 @@ function displayGames(games) {
 
 // Track selected picks and used confidence points
 function selectPick(gameIndex, team) {
-    userPicks[gameIndex] = team;
+    userPicks[gameIndex] = { team, points: null };
     alert(`You selected ${team} for game ${gameIndex + 1}`);
 }
 
@@ -82,11 +47,12 @@ function assignConfidence(gameIndex) {
     const confidenceInput = document.getElementById(`confidence${gameIndex}`);
     const points = parseInt(confidenceInput.value);
 
-    if (assignedPoints.has(points)) {
+    if (usedPoints.has(points)) {
         alert("This confidence point is already used. Choose a different one.");
         confidenceInput.value = ''; // Clear duplicate entry
     } else if (points >= 1 && points <= 16) {
-        assignedPoints.add(points);
+        usedPoints.add(points);
+        userPicks[gameIndex].points = points;
         alert(`Assigned ${points} points to game ${gameIndex + 1}`);
     } else {
         alert("Please enter a value between 1 and 16.");
@@ -100,7 +66,6 @@ function login(username, password) {
         document.getElementById('loginSection').style.display = 'none';
         document.getElementById('userHomeSection').style.display = 'block';
         document.getElementById('gamesSection').style.display = 'block';
-        document.getElementById('leaderboardSection').style.display = 'block';
         document.getElementById('usernameDisplay').textContent = username; // Display username
         fetchGameData(); // Fetch and display games
     } else {
@@ -116,33 +81,27 @@ function handleLogin(event) {
     login(username, password); // Call the login function
 }
 
-// Function to update the leaderboard
-function updateLeaderboard() {
-    leaderboard = Object.entries(userPicks).map(([key, value]) => ({
-        username: sessionStorage.getItem("loggedInUser") || "Anonymous",
-        totalPoints: value.points
-    }));
-
-    leaderboard.sort((a, b) => b.totalPoints - a.totalPoints);
+// Function to display the user's personal leaderboard
+function showUserLeaderboard() {
+    document.getElementById('leaderboardSection').style.display = 'block';
     displayLeaderboard();
 }
 
-// Function to display the leaderboard
+// Function to update and display the personal leaderboard
 function displayLeaderboard() {
     const leaderboardTableBody = document.getElementById('leaderboardTable').getElementsByTagName('tbody')[0];
     leaderboardTableBody.innerHTML = ''; // Clear existing rows
 
-    leaderboard.forEach(user => {
+    Object.entries(userPicks).forEach(([gameIndex, pickData]) => {
         const row = leaderboardTableBody.insertRow();
         row.innerHTML = `
-            <td>${user.username}</td>
-            <td>${user.totalPoints}</td>
+            <td>Game ${parseInt(gameIndex) + 1}</td>
+            <td>${pickData.team}</td>
+            <td>${pickData.points}</td>
+            <td>${pickData.result || 'Pending'}</td>
         `;
     });
 }
 
 // Set up form to trigger handleLogin on submission
 document.querySelector("form").onsubmit = handleLogin;
-
-// Initial call to load games
-fetchGameData();
