@@ -4,22 +4,34 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Football Pool</title>
-    <link rel="stylesheet" href="style.css"> <!-- Link to your CSS file -->
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
     <!-- Login Form -->
     <section id="loginSection">
-        <h2>Login</h2>
-        <form onsubmit="handleLogin(event)">
-            <label for="username">Username:</label>
-            <input type="text" id="username" required>
-            <label for="password">Password:</label>
-            <input type="password" id="password" required>
-            <button type="submit">Login</button>
-        </form>
+        <div class="login-container">
+            <h1>Welcome to NFL Football Pool</h1>
+            <h2>Login</h2>
+            <form onsubmit="handleLogin(event)">
+                <label for="username">Username:</label>
+                <input type="text" id="username" required>
+                <label for="password">Password:</label>
+                <input type="password" id="password" required>
+                <button type="submit">Login</button>
+            </form>
+        </div>
     </section>
 
-    <!-- Games Table -->
+    <!-- User Home Section (Hidden by Default) -->
+    <section id="userHomeSection" style="display: none;">
+        <h2>Welcome, <span id="usernameDisplay"></span>!</h2>
+        <p>Here are your picks:</p>
+        <div id="userPicks">
+            <!-- User's picks will be displayed here -->
+        </div>
+    </section>
+
+    <!-- Global Games Table -->
     <section id="gamesSection" style="display: none;">
         <h2>Games</h2>
         <table id="gamesTable">
@@ -54,6 +66,6 @@
         </table>
     </section>
 
-    <script src="script.js"></script> <!-- Link to your JavaScript file -->
+    <script src="script.js"></script>
 </body>
 </html>

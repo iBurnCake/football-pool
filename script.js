@@ -71,16 +71,20 @@ function displayGames(games) {
     });
 }
 
-// Function to handle user login
 function login(username, password) {
     if (userProfiles[username] === password) {
-        alert("Login successful!");
         sessionStorage.setItem("loggedInUser", username); // Store the username
-        fetchGameData(); // Call to fetch and display games after login
+        document.getElementById('loginSection').style.display = 'none';
+        document.getElementById('userHomeSection').style.display = 'block';
+        document.getElementById('gamesSection').style.display = 'block';
+        document.getElementById('leaderboardSection').style.display = 'block';
+        document.getElementById('usernameDisplay').textContent = username; // Display username
+        fetchGameData(); // Fetch and display games
     } else {
         alert("Invalid username or password.");
     }
 }
+
 
 // Function to handle login form submission
 function handleLogin(event) {
