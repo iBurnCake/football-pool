@@ -11,35 +11,20 @@ let userPicks = {}; // Track selected teams for each game
 let assignedPoints = new Set(); // Track used confidence points
 let games = []; // Global variable to hold game details after fetching
 
-// Function to fetch NFL game data from the API
-async function fetchGameData() {
-    try {
-        const response = await fetch('https://sports.core.api.espn.com/v2/sports/football/leagues/nfl/events', {
-            headers: {
-                'x-api-key': 'cf87518a-2988-4c7b-8ac9-4443bb'
-            }
-        });
+// Sample games data (use API if available)
+const sampleGames = [
+    { homeTeam: 'Texans', awayTeam: 'Jets', homeRecord: '6-2', awayRecord: '2-6' },
+    { homeTeam: 'Saints', awayTeam: 'Panthers', homeRecord: '2-6', awayRecord: '1-7' },
+    { homeTeam: 'Commanders', awayTeam: 'Giants', homeRecord: '6-2', awayRecord: '2-6' },
+    { homeTeam: 'Dolphins', awayTeam: 'Bills', homeRecord: '2-5', awayRecord: '6-2' },
+    { homeTeam: 'Chargers', awayTeam: 'Browns', homeRecord: '4-3', awayRecord: '2-6' },
+    // Add more games as needed
+];
 
-        if (!response.ok) throw new Error("Failed to fetch game events");
-
-        const data = await response.json();
-        games = data.items.map(item => ({
-            homeTeam: item.homeTeam,
-            awayTeam: item.awayTeam,
-            homeRecord: item.homeRecord,
-            awayRecord: item.awayRecord,
-        }));
-
-        displayGames(games);
-    } catch (error) {
-        console.error("Error fetching NFL data:", error);
-    }
-}
-
-// Function to display games in the table
+// Function to display games in the pool format
 function displayGames(games) {
     const tableBody = document.getElementById('gamesTable').getElementsByTagName('tbody')[0];
-    tableBody.innerHTML = ''; // Clear any existing rows
+    tableBody.innerHTML = ''; // Clear existing rows
 
     games.forEach((game, index) => {
         const row = tableBody.insertRow();
@@ -56,7 +41,7 @@ function displayGames(games) {
     });
 }
 
-// Function to select pick and assign confidence points
+// Track selected picks and used confidence points
 function selectPick(gameIndex, team) {
     userPicks[gameIndex] = { team, points: null };
     alert(`You selected ${team} for game ${gameIndex + 1}`);
@@ -86,7 +71,7 @@ function login(username, password) {
         document.getElementById('userHomeSection').style.display = 'block';
         document.getElementById('gamesSection').style.display = 'block';
         document.getElementById('usernameDisplay').textContent = username; // Display username
-        fetchGameData(); // Fetch and display games
+        displayGames(sampleGames); // Display games in personal pool format
     } else {
         alert("Invalid username or password.");
     }
