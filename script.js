@@ -1,9 +1,9 @@
 // User profiles (username and password)
 const userProfiles = {
-    "AngelaKant": "KantAngela",
-    "LukeRomano": "RomanoLuke",
-    "RyanSanders": "SanderesRyan",
-    "CharlesKeegan": "KeeganCharles"
+    "AngelaKant": "5353",
+    "LukeRomano": "4242",
+    "RyanSanders": "8989",
+    "CharlesKeegan": "0000"
 };
 
 // To store user picks and leaderboard
