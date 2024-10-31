@@ -7,17 +7,18 @@ const userProfiles = {
     "WilliamMathis": "2222" // New user added
 };
 
-// Initialize variables
-let userPicks = {}; // Store each user's picks for the games
+// To store user picks and assigned points
+let userPicks = {}; // Track selected teams for each game
 let assignedPoints = new Set(); // Track used confidence points
-let games = []; // Hold game details fetched from API
-let leaderboard = { "AngelaKant": 120, "LukeRomano": 120, "RyanSanders": 120, "CharlesKeegan": 120, "WilliamMathis": 120 }; // Starting points
+let games = []; // Global variable to hold game details after fetching
 
-// Function to fetch game data from the API
+// Function to fetch NFL game data from the API
 async function fetchGameData() {
     try {
         const response = await fetch('https://sports.core.api.espn.com/v2/sports/football/leagues/nfl/events', {
-            headers: { 'x-api-key': 'cf87518a-2988-4c7b-8ac9-4443bb' }
+            headers: {
+                'x-api-key': 'cf87518a-2988-4c7b-8ac9-4443bb'
+            }
         });
 
         if (!response.ok) throw new Error("Failed to fetch game events");
@@ -32,13 +33,13 @@ async function fetchGameData() {
             status: item.status.type.shortDetail
         }));
 
-        displayGames(games); // Display fetched games
+        displayGames(games);
     } catch (error) {
         console.error("Error fetching NFL data:", error);
     }
 }
 
-// Function to display games in the table with options for picking teams
+// Function to display games in the table
 function displayGames(games) {
     const tableBody = document.getElementById('gamesTable').getElementsByTagName('tbody')[0];
     tableBody.innerHTML = ''; // Clear any existing rows
@@ -58,7 +59,7 @@ function displayGames(games) {
     });
 }
 
-// Functions for managing picks and confidence points
+// Function to select pick and assign confidence points
 function selectPick(gameIndex, team) {
     userPicks[gameIndex] = { team, points: null };
     alert(`You selected ${team} for game ${gameIndex + 1}`);
@@ -100,38 +101,6 @@ function handleLogin(event) {
     const username = document.getElementById('username').value;
     const password = document.getElementById('password').value;
     login(username, password); // Call the login function
-}
-
-// Function to update leaderboard based on game results
-function updateLeaderboard() {
-    Object.keys(userPicks).forEach(gameIndex => {
-        const pickData = userPicks[gameIndex];
-        const game = games[gameIndex];
-        const result = game.status; // Example: if 'home' won, 'away' lost
-
-        if ((result === 'home' && pickData.team === game.homeTeam) ||
-            (result === 'away' && pickData.team === game.awayTeam)) {
-            leaderboard[sessionStorage.getItem("loggedInUser")] += pickData.points;
-        } else {
-            leaderboard[sessionStorage.getItem("loggedInUser")] -= pickData.points;
-        }
-    });
-
-    displayLeaderboard();
-}
-
-// Function to display the leaderboard in House Picks view
-function displayLeaderboard() {
-    const leaderboardTableBody = document.getElementById('leaderboardTable').getElementsByTagName('tbody')[0];
-    leaderboardTableBody.innerHTML = ''; // Clear existing rows
-
-    Object.keys(leaderboard).forEach(user => {
-        const row = leaderboardTableBody.insertRow();
-        row.innerHTML = `
-            <td>${user}</td>
-            <td>${leaderboard[user]}</td>
-        `;
-    });
 }
 
 // Set up form to trigger handleLogin on submission
