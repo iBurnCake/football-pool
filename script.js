@@ -30,7 +30,7 @@ const games = [
 let userPicks = {};
 let usedPoints = new Set();
 
-// Function to display games in the table
+// Display games in the table
 function displayGames() {
     const tableBody = document.getElementById('gamesTable').getElementsByTagName('tbody')[0];
     tableBody.innerHTML = ''; // Clear existing rows
@@ -50,7 +50,7 @@ function displayGames() {
     });
 }
 
-// Handle selection of a team
+// Handle team selection
 function selectPick(gameIndex, team) {
     userPicks[gameIndex] = { team, points: null };
     alert(`You selected ${team} for game ${gameIndex + 1}`);
@@ -75,12 +75,14 @@ function assignConfidence(gameIndex) {
 
 // Login function
 function login(username, password) {
+    console.log("Attempting login..."); // Check if login function is triggered
     if (userProfiles[username] === password) {
+        console.log("Login successful"); // Confirm login
         sessionStorage.setItem("loggedInUser", username);
         document.getElementById('usernameDisplay').textContent = username;
         document.getElementById('loginSection').style.display = 'none';
         document.getElementById('userHomeSection').style.display = 'block';
-        displayGames();
+        displayGames(); // Display the games after login
     } else {
         alert("Invalid username or password.");
     }
@@ -88,7 +90,8 @@ function login(username, password) {
 
 // Handle login form submission
 function handleLogin(event) {
-    event.preventDefault();
+    event.preventDefault(); // Prevent form submission
+    console.log("Handling login"); // Confirm handleLogin is triggered
     const username = document.getElementById('username').value;
     const password = document.getElementById('password').value;
     login(username, password);
