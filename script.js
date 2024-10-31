@@ -7,10 +7,19 @@ const userProfiles = {
 };
 
 // To store user picks and leaderboard
-let userPicks = {};
-let assignedPoints = new Set();
+let userPicks = {}; // Track selected teams for each game
+let assignedPoints = new Set(); // Track used confidence points to ensure uniqueness
 let leaderboard = [];
 let games = []; // Global variable to hold game details after fetching
+
+// Sample games data (use this temporarily or replace with actual API data)
+const sampleGames = [
+    { homeTeam: 'Vikings', awayTeam: 'Packers', homeRecord: '5-2', awayRecord: '3-4' },
+    { homeTeam: 'Jets', awayTeam: 'Patriots', homeRecord: '2-5', awayRecord: '1-6' },
+    { homeTeam: 'Bears', awayTeam: 'Lions', homeRecord: '1-5', awayRecord: '3-3' },
+    { homeTeam: 'Chargers', awayTeam: 'Raiders', homeRecord: '4-3', awayRecord: '2-5' },
+    { homeTeam: 'Dolphins', awayTeam: 'Bills', homeRecord: '4-4', awayRecord: '5-2' }
+];
 
 // Function to fetch NFL game data from the API
 async function fetchGameData() {
@@ -25,52 +34,66 @@ async function fetchGameData() {
 
         const data = await response.json();
         
-        // Array to store details of each game event
-        games = [];
-
-        // Loop through each game URL and fetch specific game data
-        for (let item of data.items) {
-            const gameResponse = await fetch(item.$ref);
-            const gameData = await gameResponse.json();
-
-            const game = {
-                homeTeam: gameData.competitions[0].competitors[0].team.displayName,
-                awayTeam: gameData.competitions[0].competitors[1].team.displayName,
-                date: gameData.date,
-                status: gameData.status.type.shortDetail
-            };
-
-            games.push(game);
-        }
+        games = data.items.map((item) => ({
+            homeTeam: item.homeTeam,  // Replace with actual data structure from API response
+            awayTeam: item.awayTeam,
+            homeRecord: item.homeRecord,
+            awayRecord: item.awayRecord,
+            date: item.date,
+            status: item.status
+        }));
 
         displayGames(games);
 
     } catch (error) {
         console.error("Error fetching NFL data:", error);
+        displayGames(sampleGames); // Use sample data if API fails
     }
 }
 
-// Function to display games on the page
+// Function to display games in the table
 function displayGames(games) {
     const tableBody = document.getElementById('gamesTable').getElementsByTagName('tbody')[0];
-    tableBody.innerHTML = ''; // Clear existing rows
+    tableBody.innerHTML = ''; // Clear any existing rows
 
     games.forEach((game, index) => {
         const row = tableBody.insertRow();
         row.innerHTML = `
             <td>${game.homeTeam} vs ${game.awayTeam}</td>
-            <td>${new Date(game.date).toLocaleString()}</td>
-            <td>${game.status}</td>
+            <td>${game.homeRecord} - ${game.awayRecord}</td>
             <td>
-                <button onclick="pickGame(${index})">Pick</button>
+                <button onclick="selectPick(${index}, 'home')">${game.homeTeam}</button>
+                <button onclick="selectPick(${index}, 'away')">${game.awayTeam}</button>
             </td>
             <td>
-                <input type="number" id="confidence${index}" min="1" max="15" required>
+                <input type="number" id="confidence${index}" min="1" max="16" onchange="assignConfidence(${index})" required>
             </td>
         `;
     });
 }
 
+// Track selected picks and used confidence points
+function selectPick(gameIndex, team) {
+    userPicks[gameIndex] = team;
+    alert(`You selected ${team} for game ${gameIndex + 1}`);
+}
+
+function assignConfidence(gameIndex) {
+    const confidenceInput = document.getElementById(`confidence${gameIndex}`);
+    const points = parseInt(confidenceInput.value);
+
+    if (assignedPoints.has(points)) {
+        alert("This confidence point is already used. Choose a different one.");
+        confidenceInput.value = ''; // Clear duplicate entry
+    } else if (points >= 1 && points <= 16) {
+        assignedPoints.add(points);
+        alert(`Assigned ${points} points to game ${gameIndex + 1}`);
+    } else {
+        alert("Please enter a value between 1 and 16.");
+    }
+}
+
+// Function to handle login
 function login(username, password) {
     if (userProfiles[username] === password) {
         sessionStorage.setItem("loggedInUser", username); // Store the username
@@ -85,38 +108,12 @@ function login(username, password) {
     }
 }
 
-
 // Function to handle login form submission
 function handleLogin(event) {
     event.preventDefault(); // Prevent the form from submitting normally
     const username = document.getElementById('username').value;
     const password = document.getElementById('password').value;
     login(username, password); // Call the login function
-}
-
-// Function to handle game pick
-function pickGame(index) {
-    const confidenceInput = document.getElementById(`confidence${index}`);
-    const confidencePoints = parseInt(confidenceInput.value);
-
-    if (assignedPoints.has(confidencePoints)) {
-        alert("You have already used this confidence point!");
-        return;
-    }
-
-    if (confidencePoints < 1 || confidencePoints > 15) {
-        alert("Please select a valid confidence point between 1 and 15.");
-        return;
-    }
-
-    assignedPoints.add(confidencePoints);
-    userPicks[index] = {
-        game: games[index],
-        points: confidencePoints
-    };
-    confidenceInput.disabled = true; // Disable input after picking
-    alert(`You've picked ${games[index].homeTeam} vs ${games[index].awayTeam} with ${confidencePoints} points.`);
-    updateLeaderboard(); // Update leaderboard after each pick
 }
 
 // Function to update the leaderboard
@@ -146,3 +143,6 @@ function displayLeaderboard() {
 
 // Set up form to trigger handleLogin on submission
 document.querySelector("form").onsubmit = handleLogin;
+
+// Initial call to load games
+fetchGameData();
