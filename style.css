@@ -95,19 +95,25 @@ button:hover {
 }
 
 /* Navigation Button Styling for Profile, House Picks, and Leaderboard */
+#topSection {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    margin-bottom: 20px;
+}
+
 #topSection button {
     background-color: #3B7EED;
     color: #FFFFFF;
     padding: 10px 20px;
     border: none;
     border-radius: 8px;
-    margin: 5px;
     font-size: 16px;
     font-weight: bold;
     cursor: pointer;
     transition: background-color 0.3s, transform 0.2s;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
-    max-width: 150px; /* Set a maximum width for shorter buttons */
+    width: auto;
 }
 
 #topSection button:hover {
@@ -120,36 +126,48 @@ button:hover {
     transform: translateY(0);
 }
 
-/* Games and Leaderboard Sections */
-section {
-    width: 90%;
-    max-width: 1000px;
-    margin: 20px auto;
-    text-align: center;
-}
-
-h2 {
-    color: #FFD700;
-    text-align: center;
-    font-size: 24px;
-    font-weight: bold;
-}
-
-table {
+/* Games Table Styling */
+#gamesTable {
     width: 100%;
-    border-collapse: collapse;
     margin-top: 20px;
+    border-collapse: collapse;
 }
 
-th, td {
+#gamesTable th, #gamesTable td {
     border: 1px solid #ddd;
-    padding: 12px;
+    padding: 10px;
     text-align: center;
-    background-color: #333;
-    color: #FFD700;
 }
 
-th {
+#gamesTable th {
     background-color: #444;
+    color: #FFD700;
     font-weight: bold;
+}
+
+#gamesTable td {
+    background-color: #333;
+    color: #FFFFFF;
+}
+
+/* Username Display Styling */
+#usernameDisplay {
+    color: #FFD700;
+    font-weight: bold;
+    font-size: 20px;
+}
+
+/* Games Table Button Styling */
+#gamesTable button {
+    background-color: #3B7EED;
+    color: #FFFFFF;
+    padding: 8px 16px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+#gamesTable button:hover {
+    background-color: #1F5B99;
 }
