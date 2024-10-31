@@ -1,0 +1,36 @@
+/* Leaderboard Section Styling */
+#leaderboardSection {
+    width: 90%;
+    max-width: 1000px;
+    margin: 20px auto;
+    text-align: center;
+    padding: 20px;
+    background-color: #282828;
+    border-radius: 8px;
+    color: #FFD700;
+}
+
+#leaderboardSection h2 {
+    font-size: 24px;
+    font-weight: bold;
+    color: #FFD700;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+}
+
+th, td {
+    border: 1px solid #ddd;
+    padding: 12px;
+    text-align: center;
+    background-color: #333;
+    color: #FFD700;
+}
+
+th {
+    background-color: #444;
+    font-weight: bold;
+}

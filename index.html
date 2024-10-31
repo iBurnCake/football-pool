@@ -4,37 +4,19 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Football Pool</title>
-    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
-    <!-- Welcome Message -->
-    <h1 id="welcomeMessage">Welcome to NFL Football Pool</h1>
+    <!-- Top Section: Display Current Week and Navigation Buttons -->
+    <div id="topSection">
+        <div id="currentWeek">Week 9</div> <!-- Placeholder for current week -->
+        <a href="profile.html"><button>Profile</button></a>
+        <a href="house_picks.html"><button>House Picks</button></a>
+        <a href="leaderboard.html"><button>Leaderboard</button></a>
+    </div>
 
-    <!-- Login Form -->
-    <section id="loginSection">
-        <div class="login-container">
-            <h2>Login</h2>
-            <form onsubmit="handleLogin(event)">
-                <label for="username">Username:</label>
-                <input type="text" id="username" required>
-                <label for="password">Password:</label>
-                <input type="password" id="password" required>
-                <button type="submit">Login</button>
-            </form>
-        </div>
-    </section>
-
-    <!-- User Home Section (Hidden by Default) -->
-    <section id="userHomeSection" style="display: none;">
-        <h2>Welcome, <span id="usernameDisplay"></span>!</h2>
-        <p>Here are your picks:</p>
-        <div id="userPicks">
-            <!-- User's picks will be displayed here -->
-        </div>
-    </section>
-
-    <!-- Global Games Table -->
-    <section id="gamesSection" style="display: none;">
+    <!-- Main Sections -->
+    <section id="gamesSection" class="contentSection">
         <h2>Games</h2>
         <table id="gamesTable">
             <thead>
@@ -52,22 +34,6 @@
         </table>
     </section>
 
-    <!-- Leaderboard Table -->
-    <section id="leaderboardSection" style="display: none;">
-        <h2>Leaderboard</h2>
-        <table id="leaderboardTable">
-            <thead>
-                <tr>
-                    <th>Username</th>
-                    <th>Total Points</th>
-                </tr>
-            </thead>
-            <tbody>
-                <!-- Leaderboard will be populated here by JavaScript -->
-            </tbody>
-        </table>
-    </section>
-
-    <script src="script.js"></script>
+    <script src="js/script.js"></script>
 </body>
 </html>
