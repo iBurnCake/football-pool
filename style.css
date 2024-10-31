@@ -15,7 +15,7 @@ body {
     min-height: 100vh;
     padding: 20px;
     flex-direction: column;
-    margin: 0; /* Remove default body margin to avoid off-centering */
+    margin: 0;
 }
 
 /* Welcome Message Styling */
@@ -76,6 +76,7 @@ input[type="password"]:focus {
     border-color: #3B7EED;
 }
 
+/* Main Button Styling */
 button {
     padding: 12px;
     width: 100%;
@@ -91,6 +92,31 @@ button {
 
 button:hover {
     background-color: #1F5B99;
+}
+
+/* Navigation Button Styling for Profile, House Picks, and Leaderboard */
+#topSection button {
+    background-color: #3B7EED;
+    color: #FFFFFF;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 8px;
+    margin: 5px;
+    font-size: 16px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background-color 0.3s, transform 0.2s;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+}
+
+#topSection button:hover {
+    background-color: #1F5B99;
+    transform: translateY(-2px);
+}
+
+#topSection button:active {
+    background-color: #1A4A7A;
+    transform: translateY(0);
 }
 
 /* Games and Leaderboard Sections */
